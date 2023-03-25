@@ -4,6 +4,24 @@
 #include "array.h"
 
 
+Array* to_array(Matrix* matrix) {
+    if (matrix->size_x != 1) {
+        printf("Matrix must be a column vector to be converted to an array.");
+        return NULL;
+    }
+
+    Array* array = (Array*) malloc(sizeof(Array));
+
+    array->size = matrix->size_y;
+    array->data = allocate_array(array->size);
+    
+    for (int i = 0; i < array->size; i++) {
+        array->data[i] = matrix->data[0][i];
+    }
+
+    return array;
+}
+
 double* allocate_array(int size) {
     return (double*) malloc(size * sizeof(double));
 }

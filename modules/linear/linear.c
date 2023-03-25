@@ -2,6 +2,10 @@
 
 
 void print_matrix(Matrix *a) {
+    if (a == NULL) {
+        printf("NULL Matrix\n");
+        return;
+    }
 
     for (int i=0; i<a->size_x; i++) {
         for (int j=0; j<a->size_y; j++) {
@@ -140,14 +144,14 @@ Matrix* transpose(Matrix* input) {
 }
 
 Matrix* mult(Matrix* a, Matrix* b) {   
-    if (a->size_y != b->size_x) {
+    if (a->size_x != b->size_y) {
         printf("Matrizes incompativeis para multiplicacao\n");
         return NULL;
     }
 
     Matrix* c = (Matrix*)malloc(sizeof(Matrix));
-    c->size_x = a->size_x;
-    c->size_y = b->size_y;
+    c->size_x = b->size_x;
+    c->size_y = a->size_y;
 
     c->data = allocate_matrix(c->size_x, c->size_y);
 
@@ -295,76 +299,52 @@ Array* gauss(Matrix* matrix) {
     return solution;
 }
 
-// Matrix* cholesky(Matrix* A, Matrix* b) {   
-//     int rows = *(A-1);
-//     int columns = *(A-2);
+Array* cholesky(Matrix* A, Matrix* b) {
+    if (A->size_x != b->size_y && b->size_x != 1) {
+        printf("Invalid matrix. The matrix must have the same number of rows as the array for the calculation of a solution.\n");
+        return NULL;
+    }
 
-//     double *g = (double *)malloc(((rows*columns)+2)*sizeof(double));
-    
-//     *(g+1) = rows;
-//     *g = columns;
+    Matrix* g = (Matrix*)malloc(sizeof(Matrix));
+    g->size_y = A->size_y;
+    g->size_x = A->size_x;
 
-//     g = g + 2;
+    g->data = allocate_matrix(g->size_x, g->size_y);
 
-//     for ( int i=0; i < rows; i++ )
-//     {
-//         for ( int j = 0; j < columns; j++)
-//         {
-//             *((g + i*columns) + j) = 0;
-//         }
-//     }
+    for ( int i=0; i < g->size_x; i++ )
+    {
+        for ( int j = 0; j < g->size_y; j++)
+        {
+           g->data[i][j] = 0;
+        }
+    }
 
-//     int i = 0;
-//     int j = 0;
-    
-//     while (j < rows)
-//     {
-//         while (i < rows)
-//         {
-//             if (i == 0 && j == 0)
-//             {
-//                 *((g + i*columns) + j) = sqrt(*((A + 0*columns) + 0));
-//             }
-//             else if (j == 0)
-//             {
-//                 *((g + i*columns) + j) = (*((A + i*columns) + 0))/(*((g + 0*columns) + 0));
-//             }
-//             else if (i == j)
-//             {
-//                 int k = 0;
-//                 double theta = 0;
+    for (int i = 0; i < g->size_y; i++) {
+        for (int j = 0; j <= i; j++) {
 
-//                 while (k < i)
-//                 {
-//                     theta += pow((*((g + i*columns) + k)),2);
-//                     k += 1;
-//                 }
-//                 *((g + i*columns) + j) = sqrt(*((A + i*columns) + i) - theta);
-//             }
-//             else
-//             {
-//                 int k = 0;
-//                 float theta = 0;
+            double sum = 0;
+            if (i == j) {
+                for (int k = 0; k < j; k++) {
+                    sum += pow(g->data[j][k], 2);
+                }
+                g->data[i][j] = sqrt(A->data[i][j] - sum);
+            } else {
+                for (int k = 0; k < j; k++) {
+                    sum += g->data[i][k]*g->data[j][k];
+                }
+                g->data[i][j] = (A->data[i][j] - sum)/(g->data[j][j]);
+            }
+        }
+    }
 
-//                 while (k < j)
-//                 {
-//                     theta += (*((g + i*columns) + k))*(*((g + j*columns) + k));
-//                     k += 1;
-//                 }
-//                 *((g + i*columns) + j) = (*((A + i*columns) + j) - theta)/(*((g + j*columns) + j));
-//             }
-//             i += 1;
-//         }
-//         j += 1;
-//         i = j;
-//     }
+    print_matrix(g);
+    Matrix* gt = transpose(g);
+    print_matrix(gt);
 
-//     double *gt = transpose(g);
+    Matrix* y = mult(inverse(g),b);
 
-//     double *y = mult(inverse(g),b);
-
-//     return mult(inverse(gt),y);
-// }
+    return to_array(mult(inverse(gt),y));
+}
 
 // Matrix* decomposition(Matrix* U, Matrix* b) {
 //     int order = *(U-1);

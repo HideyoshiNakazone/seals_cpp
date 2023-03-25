@@ -16,6 +16,10 @@ typedef struct _Matrix{
 
 #endif
 
+// Auxiliary Functions
+
+Array* to_array(Matrix* matrix);
+
 // Define Data Allocation Functions
 
 double* allocate_array(int size);

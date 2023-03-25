@@ -243,6 +243,50 @@ bool test_gauss_method() {
     return equal_array(b, expected_array);
 }
 
+bool test_cholesky_method() {
+    Matrix* a = (Matrix*) malloc(sizeof(Matrix));
+    a->size_x = 3;
+    a->size_y = 3;
+
+    a->data = allocate_matrix(a->size_x, a->size_y);
+
+    a->data[0][0] = 4.;
+    a->data[0][1] = 12.;
+    a->data[0][2] = -16.;
+
+    a->data[1][0] = 12.;
+    a->data[1][1] = 37.;
+    a->data[1][2] = -43.;
+
+    a->data[2][0] = -16.;
+    a->data[2][1] = -43.;
+    a->data[2][2] = 98.;
+
+    Matrix* b = (Matrix*) malloc(sizeof(Matrix));
+    b->size_x = 1;
+    b->size_y = 3;
+
+    b->data = allocate_matrix(b->size_x, b->size_y);
+    b->data[0][0] = 1.;
+    b->data[0][1] = 2.;
+    b->data[0][2] = 3.;
+
+    Array* result = cholesky(a, b);
+
+    Array* expected_array = (Array*) malloc(sizeof(Array));
+    expected_array->size = 3;
+
+    expected_array->data = allocate_array(expected_array->size);
+    
+    expected_array->data[0] = 28.583333;
+    expected_array->data[1] = -7.666667;
+    expected_array->data[2] = 1.333333;
+
+    // print_array(result);
+
+    return equal_array(result, expected_array);
+}
+
 int main() {
     if (test_matrix_equal()) {
         printf("test_matrix_equal() passed\n");
@@ -290,6 +334,13 @@ int main() {
         printf("test_gauss_method() passed\n");
     } else {
         printf("test_gauss_method() failed\n");
+        return 1;
+    }
+
+    if (test_cholesky_method()) {
+        printf("test_cholesky_method() passed\n");
+    } else {
+        printf("test_cholesky_method() failed\n");
         return 1;
     }
 

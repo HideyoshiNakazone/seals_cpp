@@ -22,5 +22,5 @@ Matrix* transpose(Matrix* arr);
 Matrix* mult(Matrix* a, Matrix* b);
 Matrix* inverse(Matrix* matrix);
 Array* gauss(Matrix* matriz);
-// Matrix* cholesky(Matrix* A, Matrix* b);
+Array* cholesky(Matrix* A, Matrix* b);
 // Matrix* decomposition(Matrix* U, Matrix* b);

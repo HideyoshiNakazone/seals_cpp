@@ -5,6 +5,25 @@
 #include "../../modules/shared/array.h"
 
 
+bool test_to_array() {
+    Matrix* matrix = (Matrix*) malloc(sizeof(Matrix));
+
+    matrix->size_x = 1;
+    matrix->size_y = 1;
+
+    matrix->data = allocate_matrix(matrix->size_x, matrix->size_y);
+
+    matrix->data[0][0] = 0.;
+
+    Array* array = to_array(matrix);
+
+    if (array->data[0] != 0.) {
+        return false;
+    }
+
+    return true;
+}
+
 bool test_array_creation() {
     Array* array = (Array*) malloc(sizeof(Array));
 
@@ -74,6 +93,13 @@ bool test_free_matrix() {
 }
 
 int main() {
+    if (test_to_array()) {
+        printf("test_to_array() passed\n");
+    } else {
+        printf("test_to_array() failed\n");
+        return 1;
+    }
+
     if (test_array_creation()) {
         printf("test_array_creation() passed\n");
     } else {

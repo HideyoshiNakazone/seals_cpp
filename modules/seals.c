@@ -24,6 +24,22 @@ void insert(Matrix *matrix) {
     }
 }
 
+bool equal(Matrix* a, Matrix* b) {
+    if (a->size_x != b->size_x || a->size_y != b->size_y) {
+        return false;
+    }
+
+    for (int i = 0; i < a->size_x; i++) {
+        for (int j = 0; j < a->size_y; j++) {
+            if (a->data[i][j] != b->data[i][j]) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
 Matrix* _c(Matrix* a, Matrix* b) {   
     if (a->size_y != b->size_y) {
         printf("Matrizes incompativeis para concatenacao\n");
@@ -106,108 +122,85 @@ Matrix* mult(Matrix* a, Matrix* b) {
     return c;
 }
 
-// Matrix* inverse(Matrix* input) {
+Matrix* inverse(Matrix* matrix) {
+    if (matrix->size_x != matrix->size_y) {
+        printf("Invalid matrix. The matrix must be quadratic for the calculation of an inverse.\n");
+        return NULL;
+    }
+
+    Matrix* extended = (Matrix*)malloc(sizeof(Matrix));
+
+    extended->size_x = matrix->size_x;
+    extended->size_y = matrix->size_y*2;
+
+    extended->data = allocate_matrix(extended->size_x, extended->size_y);
+
+    for (int i = 0; i < extended->size_x; i++) {
+        for (int j = 0; j < extended->size_y; j++) {
+            if (j < matrix->size_x) {
+                extended->data[i][j] = matrix->data[i][j];
+            } else {
+                if (i == (j - matrix->size_y)) {
+                    extended->data[i][j] = 1;
+                } else {
+                    extended->data[i][j] = 0;
+                }
+            }
+        }
+    }
+
+    int i = 0;
+    while (i < extended->size_x) {
+        if (extended->data[i][i] == 0) {
+            int n = i+1;
+            while (extended->data[n][i] == 0 && n < extended->size_x) {
+                n++;
+            }
+            if (n == extended->size_x) {
+                printf("Invalid matrix. The matrix must be invertible.\n");
+                return NULL;
+            }
+
+            for (int j = 0; j < extended->size_y; j++) {
+                double temp = extended->data[i][j];
+                extended->data[i][j] = extended->data[n][j];
+                extended->data[n][j] = temp;
+            }
+        }
+
+        for (int j = 0; j < extended->size_x; j++) {
+            if (extended->data[i][i] == 0 || i == j) {
+                continue;
+            }
+            double m = extended->data[j][i] / extended->data[i][i];
+            for (int k = 0; k < extended->size_y; k++) {
+                extended->data[j][k] -= m * extended->data[i][k];
+            }
+        }
+
+        if (extended->data[i][i] == -1) {
+            for (int j = 0; j < extended->size_y; j++) {
+                extended->data[i][j] *= -1;
+            }
+        }
+
+        i += 1;
+    }
+
+    Matrix* inverse = (Matrix*)malloc(sizeof(Matrix));
+    inverse->size_x = matrix->size_x;
+    inverse->size_y = matrix->size_y;
+
+    inverse->data = allocate_matrix(inverse->size_x, inverse->size_y);
+
+    for (int i = 0; i < inverse->size_x; i++) {
+        for (int j = 0; j < inverse->size_y; j++) {
+            inverse->data[i][j] = extended->data[i][j+inverse->size_y];
+        }
+    }
     
-//     Matrix* extended = (Matrix*)malloc(sizeof(Matrix));
-
-//     extended->size_y = input->size_y;
-//     extended->size_x = input->size_x*2;
-
-//     extended->data = (double *)malloc(
-//         (extended->size_x*extended->size_y)*sizeof(double)
-//     );
-    
-//     for (int i = 0; i < extended->size_x; i++ ) {
-//         for (int j = 0; j < extended->size_y; j++) {
-//             if (i < input->size_x) {
-//                 extended->data[i][j] = input->data[i][j];
-//             } else {
-//                 if ((i-input->size_x) == j) {
-//                     extended->data[i][j] = 1;
-//                 } else {
-//                     extended->data[i][j] = 0;
-//                 }
-//             }
-//         }
-//     }
-
-//     int i=0, j=0, n;
-
-//     while (i < rows)
-//     {
-//         if ( *((matriz + i*columns) + i ) == 0 )
-//         {
-//             n = i + 1;
-
-//             while (( *((matriz + i*columns) + i) == 0 ) && (n < rows))
-//             {
-//                 for (int m = 0; m < columns; m++)
-//                 {
-//                     double swap = *((matriz + i*columns) + m);
-//                     *((matriz + i*columns) + m) = *((matriz + n*columns) + m);
-//                     *((matriz + n*columns) + m) = swap;
-//                 }
-//                 n += 1;
-//             }
-//         }
-
-//         n = 0;
-
-//         while ( n < rows )
-//         {
-
-//             if (( n==i ) || (*((matriz + i*columns) + i ) == 0 ))
-//             {
-//                 n += 1;
-//             }
-//             else
-//             {
-//                 double mult = ( *((matriz + n*columns) + i ) )/( *((matriz + i*columns) + i ) );
-
-//                 for ( int m = 0; m < columns; m++ )
-//                 {
-//                     (*((matriz + n*columns) + m)) = (*((matriz + n*columns) + m)) - mult*( *((matriz + i*columns) + m) );
-//                 }
-
-//                 n += 1;
-//             }
-//         }
-
-//         i += 1;
-//         n = 0;
-//     }
-
-//     i = 0;
-
-//     while ((i<rows) && (*((matriz + i*columns) + i) != 0))
-//     {   
-//         double temp = (*((matriz + i*columns) + i));
-//         for ( int m = 0; m < columns; m++)
-//         {
-//             (*((matriz + i*columns) + m)) = (*((matriz + i*columns) + m))/temp;
-//         }
-
-//         i += 1;
-//     }
-
-//     double *inverse = (double *)malloc(((rows*rows)+2)*sizeof(double));
-
-//     *(inverse) = columns/2;
-//     *(inverse+1) = rows;
-
-//     inverse = inverse + 2;
-
-//     for (int i = 0; i < order; i++ )
-//     {
-//         for (int j = 0; j < order; j++)
-//         {
-//             *((inverse + i*order) + j) = *((matriz + (2*i+1)*order) + j);
-//         }
-        
-//     }
-
-//     return inverse;
-// }
+    return inverse;
+}
 
 // Matrix* gauss(Matrix* input) {
 //     int rows = *(input-1);

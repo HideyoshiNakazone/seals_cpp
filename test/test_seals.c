@@ -6,6 +6,31 @@
 #include "../modules/seals.h"
 
 
+bool test_matrix_equal() {
+    Matrix* a = (Matrix*) malloc(sizeof(Matrix));
+
+    a->size_x = 2;
+    a->size_y = 2;
+
+    a->data = allocate_matrix(a->size_x, a->size_y);
+    a->data[0][0] = 1.;
+    a->data[0][1] = 1.;
+    a->data[1][0] = 1.;
+    a->data[1][1] = 1.;
+
+    Matrix* b = (Matrix*) malloc(sizeof(Matrix));
+    b->size_x = 2;
+    b->size_y = 2;
+
+    b->data = allocate_matrix(b->size_x, b->size_y);
+    b->data[0][0] = 1.;
+    b->data[0][1] = 1.;
+    b->data[1][0] = 1.;
+    b->data[1][1] = 1.;
+
+    return equal(a, b);
+}
+
 bool test_concatenate_matrix() {
 
     Matrix* a = (Matrix*) malloc(sizeof(Matrix));
@@ -145,7 +170,40 @@ bool test_mult_matrix() {
     return true;
 }
 
+bool test_inverse_matrix() {
+
+    Matrix* a = (Matrix*) malloc(sizeof(Matrix));
+    a->size_x = 2;
+    a->size_y = 2;
+
+    a->data = allocate_matrix(a->size_x, a->size_y);
+    a->data[0][0] = 1.;
+    a->data[0][1] = 2.;
+    a->data[1][0] = 2.;
+    a->data[1][1] = 3.;
+
+    Matrix* expected_inverse = (Matrix*) malloc(sizeof(Matrix));
+    expected_inverse->size_x = 2;
+    expected_inverse->size_y = 2;
+
+    expected_inverse->data = allocate_matrix(expected_inverse->size_x, expected_inverse->size_y);
+    expected_inverse->data[0][0] = -3.;
+    expected_inverse->data[0][1] = 2.;
+    expected_inverse->data[1][0] = 2.;
+    expected_inverse->data[1][1] = -1.;
+    
+    Matrix* b = inverse(a);
+
+    return equal(b, expected_inverse);
+}
+
 int main() {
+    if (test_matrix_equal()) {
+        printf("test_matrix_equal() passed\n");
+    } else {
+        printf("test_matrix_equal() failed\n");
+    }
+
     if (test_concatenate_matrix()) {
         printf("test_concatenate_matrix() passed\n");
     } else {
@@ -168,6 +226,12 @@ int main() {
         printf("test_mult_matrix() passed\n");
     } else {
         printf("test_mult_matrix() failed\n");
+    }
+
+    if (test_inverse_matrix()) {
+        printf("test_inverse_matrix() passed\n");
+    } else {
+        printf("test_inverse_matrix() failed\n");
     }
 
     return 0;

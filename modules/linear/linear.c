@@ -46,44 +46,6 @@ void insert_array(Array *array) {
     }
 }
 
-bool equal_array(Array* a, Array* b) {
-    if (a == NULL || b == NULL) {
-        return false;
-    }
-
-    if (a->size != b->size) {
-        return false;
-    }
-
-    for (int i = 0; i < a->size; i++) {
-        if (a->data[i] != b->data[i]) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool equal_matrix(Matrix* a, Matrix* b) {
-    if (a == NULL || b == NULL) {
-        return false;
-    }
-
-    if (a->size_x != b->size_x || a->size_y != b->size_y) {
-        return false;
-    }
-
-    for (int i = 0; i < a->size_x; i++) {
-        for (int j = 0; j < a->size_y; j++) {
-            if (a->data[i][j] != b->data[i][j]) {
-                return false;
-            }
-        }
-    }
-
-    return true;
-}
-
 Matrix* _c(Matrix* a, Matrix* b) {   
     if (a->size_y != b->size_y) {
         printf("Matrizes incompativeis para concatenacao\n");
@@ -144,14 +106,14 @@ Matrix* transpose(Matrix* input) {
 }
 
 Matrix* mult(Matrix* a, Matrix* b) {   
-    if (a->size_x != b->size_y) {
+    if (a->size_y != b->size_x) {
         printf("Matrizes incompativeis para multiplicacao\n");
         return NULL;
     }
 
     Matrix* c = (Matrix*)malloc(sizeof(Matrix));
-    c->size_x = b->size_x;
-    c->size_y = a->size_y;
+    c->size_x = a->size_x;
+    c->size_y = b->size_y;
 
     c->data = allocate_matrix(c->size_x, c->size_y);
 
@@ -300,7 +262,7 @@ Array* gauss(Matrix* matrix) {
 }
 
 Array* cholesky(Matrix* A, Matrix* b) {
-    if (A->size_x != b->size_y && b->size_x != 1) {
+    if (A->size_x != b->size_x && b->size_y != 1) {
         printf("Invalid matrix. The matrix must have the same number of rows as the array for the calculation of a solution.\n");
         return NULL;
     }
@@ -337,70 +299,54 @@ Array* cholesky(Matrix* A, Matrix* b) {
         }
     }
 
-    print_matrix(g);
     Matrix* gt = transpose(g);
-    print_matrix(gt);
 
     Matrix* y = mult(inverse(g),b);
 
     return to_array(mult(inverse(gt),y));
 }
 
-// Matrix* decomposition(Matrix* U, Matrix* b) {
-//     int order = *(U-1);
-//     double *L = (double *)malloc(((order*order)+2)*sizeof(double));
+Array* decomposition(Matrix* U, Matrix* b) {
+    if (U->size_x != b->size_x && b->size_y != 1) {
+        printf("Invalid matrix. The matrix must have the same number of rows as the array for the calculation of a solution.\n");
+        return NULL;
+    }
+    Matrix* L = (Matrix*)malloc(sizeof(Matrix));
+    L->size_y = U->size_y;
+    L->size_x = U->size_x;
 
-//     *L = order;
-//     *(L+1) = order;
+    L->data = allocate_matrix(L->size_x, L->size_y);
 
-//     L = L + 2; 
+    identity(L);
 
-//     L = identity(L);
+    for (int i = 0; i < U->size_x; i++) {
 
-//     int i = 0;
-//     int k = 0;
-//     int n;
-
-//     while (i < order)
-//     {            
-//         k = 0;
-
-//         if ( *((U + i*order) + i) == 0 )
-//         {                
-//             n = i;
-            
-//             while ((*((U + i*order) + i) == 0) && (n < order))
-//             {
-//                 for (int m = 0; m < order; m++)
-//                 {
-//                     double swap = *((U + i*order) + m);
-//                     *((U + i*order) + m) = *((U + n*order) + m);
-//                     *((U + n*order) + m) = swap;
-//                 }
+        if ( U->data[i][i] == 0 )
+        {                
+            int n = i;
+            while (U->data[i][i] == 0 && n < U->size_x) {
+                for (int m = 0; m < U->size_x; m++) {
+                    double swap = U->data[i][m];
+                    U->data[i][m] = U->data[n][m];
+                    U->data[n][m] = swap;
+                }
                 
-//                 n += 1;
-//             }
-//         }
-//         while (k < order)
-//         {    
-//             if ((k <= i) || (*((U + i*order) + i) == 0))
-//             {                    
-//                 k += 1;
-//             }   
-//             else
-//             {
-//                 *((L + k*order) + i) = (*((U + k*order) + i))/(*((U + i*order) + i));
-//                 for ( int m = 0; m < order; m++ )
-//                 {
-//                     (*((U + k*order) + m)) = (*((U + k*order) + m)) - (*((L + k*order) + i))*(*((U + i*order) + m));
-//                 }
-//                 k += 1;
-//             }
-//         }   
-//         i += 1;
-//     }
+                n += 1;
+            }
+        }
 
-//     double *y = mult(inverse(L),b);
+        for (int k = 0; k < U->size_x; k++) {    
+            if ((k > i) && U->data[i][i] != 0) {
+                L->data[k][i] = U->data[k][i]/U->data[i][i];
 
-//     return mult(inverse(U),y);
-// }
+                for ( int m = 0; m < U->size_x; m++ ) {
+                    U->data[k][m] = U->data[k][m] - L->data[k][i]*U->data[i][m];
+                }
+            }
+        }
+    }
+
+    double *y = mult(inverse(L),b);
+
+    return to_array(mult(inverse(U),y));
+}

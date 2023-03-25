@@ -1,3 +1,10 @@
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define EPSILON 0.000001
+
 #ifndef array_h
 #define array_h
 
@@ -17,6 +24,10 @@ typedef struct _Matrix{
 #endif
 
 // Auxiliary Functions
+
+
+bool equal_array(Array* a, Array* b);
+bool equal_matrix(Matrix* a, Matrix* b);
 
 Array* to_array(Matrix* matrix);
 

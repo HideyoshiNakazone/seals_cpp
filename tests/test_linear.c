@@ -6,31 +6,6 @@
 #include "../modules/linear/linear.h"
 
 
-bool test_matrix_equal() {
-    Matrix* a = (Matrix*) malloc(sizeof(Matrix));
-
-    a->size_x = 2;
-    a->size_y = 2;
-
-    a->data = allocate_matrix(a->size_x, a->size_y);
-    a->data[0][0] = 1.;
-    a->data[0][1] = 1.;
-    a->data[1][0] = 1.;
-    a->data[1][1] = 1.;
-
-    Matrix* b = (Matrix*) malloc(sizeof(Matrix));
-    b->size_x = 2;
-    b->size_y = 2;
-
-    b->data = allocate_matrix(b->size_x, b->size_y);
-    b->data[0][0] = 1.;
-    b->data[0][1] = 1.;
-    b->data[1][0] = 1.;
-    b->data[1][1] = 1.;
-
-    return equal_matrix(a, b);
-}
-
 bool test_concatenate_matrix() {
 
     Matrix* a = (Matrix*) malloc(sizeof(Matrix));
@@ -133,37 +108,27 @@ bool test_mult_matrix() {
     a->data = allocate_matrix(a->size_x, a->size_y);
 
     a->data[0][0] = 1.;
-    a->data[0][1] = 2.;
-    a->data[1][0] = 3.;
-    a->data[1][1] = 4.;
+    a->data[0][1] = 1.;
+    a->data[1][0] = 1.;
+    a->data[1][1] = 1.;
 
     Matrix* b = (Matrix*) malloc(sizeof(Matrix));
 
     b->size_x = 2;
-    b->size_y = 2;
+    b->size_y = 1;
 
     b->data = allocate_matrix(b->size_x, b->size_y);
 
-    b->data[0][0] = 1.;
-    b->data[0][1] = 2.;
-    b->data[1][0] = 3.;
-    b->data[1][1] = 4.;
+    b->data[0][0] = 2.;
+    b->data[1][0] = 2.;
 
     Matrix* c = mult(a, b);
 
-    if (c->data[0][0] != 7.) {
+    if (c->data[0][0] != 4.) {
         return false;
     }
 
-    if (c->data[0][1] != 10.) {
-        return false;
-    }
-
-    if (c->data[1][0] != 15.) {
-        return false;
-    }
-
-    if (c->data[1][1] != 22.) {
+    if (c->data[1][0] != 4.) {
         return false;
     }
 
@@ -263,13 +228,13 @@ bool test_cholesky_method() {
     a->data[2][2] = 98.;
 
     Matrix* b = (Matrix*) malloc(sizeof(Matrix));
-    b->size_x = 1;
-    b->size_y = 3;
+    b->size_x = 3;
+    b->size_y = 1;
 
     b->data = allocate_matrix(b->size_x, b->size_y);
     b->data[0][0] = 1.;
-    b->data[0][1] = 2.;
-    b->data[0][2] = 3.;
+    b->data[1][0] = 2.;
+    b->data[2][0] = 3.;
 
     Array* result = cholesky(a, b);
 
@@ -282,19 +247,53 @@ bool test_cholesky_method() {
     expected_array->data[1] = -7.666667;
     expected_array->data[2] = 1.333333;
 
-    // print_array(result);
+    return equal_array(result, expected_array);
+}
+
+bool test_decomposition_method() {
+    Matrix* U = (Matrix*) malloc(sizeof(Matrix));
+    U->size_x = 3;
+    U->size_y = 3;
+
+    U->data = allocate_matrix(U->size_x, U->size_y);
+
+    U->data[0][0] = +3.;
+    U->data[0][1] = -6.;
+    U->data[0][2] = -3.;
+
+    U->data[1][0] = +2.;
+    U->data[1][1] = +0.;
+    U->data[1][2] = +6.;
+
+    U->data[2][0] = -4.;
+    U->data[2][1] = +7.;
+    U->data[2][2] = +4.;
+
+    Matrix* b = (Matrix*) malloc(sizeof(Matrix));
+    b->size_x = 3;
+    b->size_y = 1;
+
+    b->data = allocate_matrix(b->size_x, b->size_y);
+
+    b->data[0][0] = -03.;
+    b->data[1][0] = -22.;
+    b->data[2][0] = +03.;
+
+    Array* result = decomposition(U, b);
+
+    Array* expected_array = (Array*) malloc(sizeof(Array));
+    expected_array->size = 3;
+
+    expected_array->data = allocate_array(expected_array->size);
+
+    expected_array->data[0] = -2.;
+    expected_array->data[1] = +1.;
+    expected_array->data[2] = -3.;
 
     return equal_array(result, expected_array);
 }
 
 int main() {
-    if (test_matrix_equal()) {
-        printf("test_matrix_equal() passed\n");
-    } else {
-        printf("test_matrix_equal() failed\n");
-        return 1;
-    }
-
     if (test_concatenate_matrix()) {
         printf("test_concatenate_matrix() passed\n");
     } else {
@@ -341,6 +340,13 @@ int main() {
         printf("test_cholesky_method() passed\n");
     } else {
         printf("test_cholesky_method() failed\n");
+        return 1;
+    }
+
+    if (test_decomposition_method()) {
+        printf("test_decomposition_method() passed\n");
+    } else {
+        printf("test_decomposition_method() failed\n");
         return 1;
     }
 

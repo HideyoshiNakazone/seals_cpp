@@ -1,22 +1,57 @@
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "array.h"
 
 
+bool equal_array(Array* a, Array* b) {
+    if (a == NULL || b == NULL) {
+        return false;
+    }
+
+    if (a->size != b->size) {
+        return false;
+    }
+
+    for (int i = 0; i < a->size; i++) {
+        if ( fabs(a->data[i] - b->data[i]) > EPSILON) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool equal_matrix(Matrix* a, Matrix* b) {
+    if (a == NULL || b == NULL) {
+        return false;
+    }
+
+    if (a->size_x != b->size_x || a->size_y != b->size_y) {
+        return false;
+    }
+
+    for (int i = 0; i < a->size_x; i++) {
+        for (int j = 0; j < a->size_y; j++) {
+            if (fabs(a->data[i][j] - b->data[i][j]) > EPSILON) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
 Array* to_array(Matrix* matrix) {
-    if (matrix->size_x != 1) {
+    if (matrix->size_y != 1) {
         printf("Matrix must be a column vector to be converted to an array.");
         return NULL;
     }
 
     Array* array = (Array*) malloc(sizeof(Array));
 
-    array->size = matrix->size_y;
+    array->size = matrix->size_x;
     array->data = allocate_array(array->size);
     
     for (int i = 0; i < array->size; i++) {
-        array->data[i] = matrix->data[0][i];
+        array->data[i] = matrix->data[i][0];
     }
 
     return array;

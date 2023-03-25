@@ -1,7 +1,7 @@
-#include "seals.h"
+#include "linear.h"
 
 
-void print(Matrix *a) {
+void print_matrix(Matrix *a) {
 
     for (int i=0; i<a->size_x; i++) {
         for (int j=0; j<a->size_y; j++) {
@@ -11,7 +11,7 @@ void print(Matrix *a) {
     }
 }
 
-void insert(Matrix *matrix) {
+void insert_matrix(Matrix *matrix) {
     double temp;
 
     for (int i=0; i < matrix->size_x; i++) {
@@ -24,7 +24,47 @@ void insert(Matrix *matrix) {
     }
 }
 
-bool equal(Matrix* a, Matrix* b) {
+void print_array(Array *a) {
+
+    for (int i=0; i<a->size; i++) {
+        printf("%lf ", a->data[i]);
+    }
+    printf("\n");
+}
+
+void insert_array(Array *array) {
+    double temp;
+
+    for (int i=0; i < array->size; i++) {
+        printf("Insira o valor do elemento %d: ", i+1);
+        scanf("%lf",&temp);
+        array->data[i] = temp;
+    }
+}
+
+bool equal_array(Array* a, Array* b) {
+    if (a == NULL || b == NULL) {
+        return false;
+    }
+
+    if (a->size != b->size) {
+        return false;
+    }
+
+    for (int i = 0; i < a->size; i++) {
+        if (a->data[i] != b->data[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool equal_matrix(Matrix* a, Matrix* b) {
+    if (a == NULL || b == NULL) {
+        return false;
+    }
+
     if (a->size_x != b->size_x || a->size_y != b->size_y) {
         return false;
     }
@@ -153,7 +193,7 @@ Matrix* inverse(Matrix* matrix) {
     while (i < extended->size_x) {
         if (extended->data[i][i] == 0) {
             int n = i+1;
-            while (extended->data[n][i] == 0 && n < extended->size_x) {
+            while (n < extended->size_x && extended->data[n][i] == 0) {
                 n++;
             }
             if (n == extended->size_x) {
@@ -178,9 +218,10 @@ Matrix* inverse(Matrix* matrix) {
             }
         }
 
-        if (extended->data[i][i] == -1) {
+        if (extended->data[i][i] != 0) {
+            double div = extended->data[i][i];
             for (int j = 0; j < extended->size_y; j++) {
-                extended->data[i][j] *= -1;
+                extended->data[i][j] /= div;
             }
         }
 
@@ -198,89 +239,61 @@ Matrix* inverse(Matrix* matrix) {
             inverse->data[i][j] = extended->data[i][j+inverse->size_y];
         }
     }
+
+    free_matrix(&extended);
     
     return inverse;
 }
 
-// Matrix* gauss(Matrix* input) {
-//     int rows = *(input-1);
-//     int columns = *(input-2);
+Array* gauss(Matrix* matrix) {
+    if ((matrix->size_x + 1) < matrix->size_y) {
+        printf("Invalid matrix. The matrix must have more rows than columns for the calculation of a solution.\n");
+        return NULL;
+    }
 
-//     double *matriz = (double *)malloc(((rows*columns)+2)*sizeof(double));
+    int i = 0;
+    int valid_solutions_count = 0;
+    while (i < matrix->size_x) {
+        if (matrix->data[i][i] == 0) {
+            int n = i+1;
+            while (n < matrix->size_x && matrix->data[n][i] == 0) {
+                n++;
+            }
+            if (n == matrix->size_x) {
+                break;
+            }
 
-//     *(matriz) = columns;
-//     *(matriz+1) = rows;
+            for (int j = 0; j < matrix->size_y; j++) {
+                double temp = matrix->data[i][j];
+                matrix->data[i][j] = matrix->data[n][j];
+                matrix->data[n][j] = temp;
+            }
+        }
+        valid_solutions_count += 1;
+        for (int j = 0; j < matrix->size_x; j++) {
+            if (matrix->data[i][i] == 0 || i == j) {
+                continue;
+            }
+            double m = matrix->data[j][i] / matrix->data[i][i];
+            for (int k = 0; k < matrix->size_y; k++) {
+                matrix->data[j][k] -= m * matrix->data[i][k];
+            }
+        }
 
-//     matriz  = matriz + 2;
-    
-//     for (int i = 0; i < rows; i++ )
-//     {
-//         for (int j = 0; j < columns; j++)
-//         {
-//             *((matriz + i*columns) + j) = *((input + i*columns) + j);
-//         }
-        
-//     }
+        i += 1;
+    }
 
-//     int i=0, j=0, n;
+    Array* solution = (Array*)malloc(sizeof(Array));
+    solution->size = valid_solutions_count;
 
-//     while (i < rows)
-//     {
-//         if ( *((matriz + i*columns) + i ) == 0 )
-//         {
-//             n = i+1;
-//             while (( *((matriz + i*columns) + i) == 0 ) && (n < rows))
-//             {
-//                 for (int m = 0; m < columns; m++)
-//                 {
-//                     double swap = *((matriz + i*columns) + m);
-//                     *((matriz + i*columns) + m) = *((matriz + n*columns) + m);
-//                     *((matriz + n*columns) + m) = swap;
-//                 }
-//                 n += 1;
-//             }
-//         }
+    solution->data = allocate_array(solution->size);
 
-//         n = 0;
+    for (int i = 0; i < solution->size; i++) {
+        solution->data[i] = matrix->data[i][matrix->size_y-1] / matrix->data[i][i];
+    }
 
-//         while ( n < rows )
-//         {
-
-//             if (( n==i ) || (*((matriz + i*columns) + i ) == 0 ))
-//             {
-//                 n += 1;
-//             }
-//             else
-//             {
-//                 double mult = ( *((matriz + n*columns) + i ) )/( *((matriz + i*columns) + i ) );
-
-//                 for ( int m = 0; m < columns; m++ )
-//                 {
-//                     (*((matriz + n*columns) + m)) = (*((matriz + n*columns) + m)) - mult*( *((matriz + i*columns) + m) );
-//                 }
-
-//                 n += 1;
-//             }
-//         }
-
-//         i += 1;
-//         n = 0;
-//     }
-
-//     i = 0;
-
-//     while ((i<rows) && (*((matriz + i*columns) + i) != 0))
-//     {
-//         for ( int m = 0; m < columns; m++)
-//         {
-//             (*((matriz + i*columns) + m)) = (*((matriz + i*columns) + m))/(*((matriz + i*columns) + i));
-//         }
-
-//         i += 1;
-//     }
-
-//     return matriz;
-// }
+    return solution;
+}
 
 // Matrix* cholesky(Matrix* A, Matrix* b) {   
 //     int rows = *(A-1);

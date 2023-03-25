@@ -3,7 +3,7 @@
 #include <stdbool.h>
 
 #include "../modules/shared/array.h"
-#include "../modules/seals.h"
+#include "../modules/linear/linear.h"
 
 
 bool test_matrix_equal() {
@@ -28,7 +28,7 @@ bool test_matrix_equal() {
     b->data[1][0] = 1.;
     b->data[1][1] = 1.;
 
-    return equal(a, b);
+    return equal_matrix(a, b);
 }
 
 bool test_concatenate_matrix() {
@@ -173,28 +173,74 @@ bool test_mult_matrix() {
 bool test_inverse_matrix() {
 
     Matrix* a = (Matrix*) malloc(sizeof(Matrix));
-    a->size_x = 2;
-    a->size_y = 2;
+    a->size_x = 3;
+    a->size_y = 3;
 
     a->data = allocate_matrix(a->size_x, a->size_y);
-    a->data[0][0] = 1.;
-    a->data[0][1] = 2.;
-    a->data[1][0] = 2.;
-    a->data[1][1] = 3.;
+    a->data[0][0] = +01.;
+    a->data[0][1] = +00.;
+    a->data[0][2] = +04.;
+
+    a->data[1][0] = +01.;
+    a->data[1][1] = +01.;
+    a->data[1][2] = +06.;
+
+    a->data[2][0] = -03.;
+    a->data[2][1] = +00.;
+    a->data[2][2] = -10.;
 
     Matrix* expected_inverse = (Matrix*) malloc(sizeof(Matrix));
-    expected_inverse->size_x = 2;
-    expected_inverse->size_y = 2;
+    expected_inverse->size_x = 3;
+    expected_inverse->size_y = 3;
 
     expected_inverse->data = allocate_matrix(expected_inverse->size_x, expected_inverse->size_y);
-    expected_inverse->data[0][0] = -3.;
-    expected_inverse->data[0][1] = 2.;
-    expected_inverse->data[1][0] = 2.;
-    expected_inverse->data[1][1] = -1.;
     
+    expected_inverse->data[0][0] = -5.;
+    expected_inverse->data[0][1] = +0.;
+    expected_inverse->data[0][2] = -2.;
+
+    expected_inverse->data[1][0] = -4.;
+    expected_inverse->data[1][1] = +1.;
+    expected_inverse->data[1][2] = -1.;
+
+    expected_inverse->data[2][0] = +1.5;
+    expected_inverse->data[2][1] = +0.;
+    expected_inverse->data[2][2] = +0.5;
+
     Matrix* b = inverse(a);
 
-    return equal(b, expected_inverse);
+    return equal_matrix(b, expected_inverse);
+}
+
+bool test_gauss_method() {
+    Matrix* a = (Matrix*) malloc(sizeof(Matrix));
+    a->size_x = 3;
+    a->size_y = 3;
+
+    a->data = allocate_matrix(a->size_x, a->size_y);
+
+    a->data[0][0] = 0.;
+    a->data[0][1] = 1.;
+    a->data[0][2] = 2.;
+
+    a->data[1][0] = 1.;
+    a->data[1][1] = 1.;
+    a->data[1][2] = 3.;
+
+    a->data[2][0] = 0.;
+    a->data[2][1] = 1.;
+    a->data[2][2] = 2.;
+
+    Array* expected_array = (Array*) malloc(sizeof(Array));
+    expected_array->size = 2;
+
+    expected_array->data = allocate_array(expected_array->size);
+    expected_array->data[0] = 1.;
+    expected_array->data[1] = 2.;
+
+    Array* b = gauss(a);
+
+    return equal_array(b, expected_array);
 }
 
 int main() {
@@ -202,36 +248,49 @@ int main() {
         printf("test_matrix_equal() passed\n");
     } else {
         printf("test_matrix_equal() failed\n");
+        return 1;
     }
 
     if (test_concatenate_matrix()) {
         printf("test_concatenate_matrix() passed\n");
     } else {
         printf("test_concatenate_matrix() failed\n");
+        return 1;
     }
 
     if (test_identity_matrix_creation()) {
         printf("test_identity_matrix_creation() passed\n");
     } else {
         printf("test_identity_matrix_creation() failed\n");
+        return 1;
     }
 
     if (test_transpose_matrix()) {
         printf("test_transpose_matrix() passed\n");
     } else {
         printf("test_transpose_matrix() failed\n");
+        return 1;
     }
 
     if (test_mult_matrix()) {
         printf("test_mult_matrix() passed\n");
     } else {
         printf("test_mult_matrix() failed\n");
+        return 1;
     }
 
     if (test_inverse_matrix()) {
         printf("test_inverse_matrix() passed\n");
     } else {
         printf("test_inverse_matrix() failed\n");
+        return 1;
+    }
+
+    if (test_gauss_method()) {
+        printf("test_gauss_method() passed\n");
+    } else {
+        printf("test_gauss_method() failed\n");
+        return 1;
     }
 
     return 0;

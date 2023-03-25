@@ -21,3 +21,9 @@ typedef struct _Matrix{
 double* allocate_array(int size);
 
 double** allocate_matrix(int size_x, int size_y);
+
+// Define Data Free Functions
+
+void free_array(Array** array);
+
+void free_matrix(Matrix** matrix);

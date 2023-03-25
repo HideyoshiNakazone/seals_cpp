@@ -17,3 +17,20 @@ double** allocate_matrix(int size_x, int size_y) {
 
     return data;
 }
+
+void free_array(Array** array) {
+    free((*array)->data);
+    free(*array);
+
+    *array = NULL;
+}
+
+void free_matrix(Matrix** matrix) {
+    for (int i = 0; i < (*matrix)->size_x; i++) {
+        free((*matrix)->data[i]);
+    }
+    free((*matrix)->data);
+    free(*matrix);
+
+    *matrix = NULL;
+}

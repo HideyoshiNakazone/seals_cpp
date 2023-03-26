@@ -30,6 +30,14 @@
             "program": "${workspaceFolder}/tests/test_root",
             "cwd": "${workspaceFolder}",
             "preLaunchTask": "build"
+        },
+        {
+            "name": "Run Test Integral",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/tests/test_integral",
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "build"
         }
     ]
 }

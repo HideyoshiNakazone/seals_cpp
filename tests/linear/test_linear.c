@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "../modules/shared/array.h"
-#include "../modules/linear/linear.h"
+#include "../../modules/linear/linear.h"
+#include "../../modules/shared/array.h"
 
 
 bool test_concatenate_matrix() {

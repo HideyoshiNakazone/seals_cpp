@@ -1,3 +1,6 @@
+#include "root.h"
+
+
 double bissec(double (*f)(double), double a, double b, double eps) {
     double fa = f(a);
     double fb = f(b);

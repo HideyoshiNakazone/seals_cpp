@@ -1,5 +1,6 @@
 CC=gcc
-CFLAGS=-g3 -lm
+CFLAGS=-g3
+LDLIBS=-lm
 
 
 debug_tests: CFLAGS += -DDEBUG -g
@@ -14,19 +15,19 @@ run_tests: test
 test: test_linear test_array test_root test_integral
 
 test_linear: linear/test_linear.o ../modules/linear/linear.o  ../modules/shared/array.o
-	$(CC) $(CFLAGS) ../modules/linear/linear.o  ../modules/shared/array.o -o test_linear linear/test_linear.o
+	$(CC) $(CFLAGS) ../modules/linear/linear.o  ../modules/shared/array.o $(LDLIBS) -o test_linear linear/test_linear.o
 
 test_root: root/test_root.o ../modules/root/root.o
-	$(CC) $(CFLAGS) ../modules/root/root.o -o test_root root/test_root.o
+	$(CC) $(CFLAGS) ../modules/root/root.o $(LDLIBS) -o test_root root/test_root.o
 
 test_integral: integral/test_integral.o ../modules/integral/integral.o
-	$(CC) $(CFLAGS) ../modules/integral/integral.o -o test_integral integral/test_integral.o
+	$(CC) $(CFLAGS) ../modules/integral/integral.o $(LDLIBS) -o test_integral integral/test_integral.o
 
 test_array: shared/test_array.o ../modules/shared/array.o
-	$(CC) $(CFLAGS) ../modules/shared/array.o -o test_array shared/test_array.o
+	$(CC) $(CFLAGS) ../modules/shared/array.o $(LDLIBS) -o test_array shared/test_array.o
 
 %: %.c
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $^ $(LDLIBS) -o $@
 
 clean:
 	rm -f tests/*.o

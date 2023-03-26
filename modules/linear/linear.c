@@ -346,7 +346,7 @@ Array* decomposition(Matrix* U, Matrix* b) {
         }
     }
 
-    double *y = mult(inverse(L),b);
+    Matrix* y = mult(inverse(L),b);
 
     return to_array(mult(inverse(U),y));
 }

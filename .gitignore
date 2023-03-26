@@ -1,5 +1,3 @@
-.vscode
-
 tests/test_*
 
 *.o

@@ -1,23 +1,21 @@
+#include <iostream>
 #include <stdio.h>
-#include <locale.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <math.h>
+#include <string.h>
 
 #include "../shared/array.h"
 
 
-void print_array(Array* arr);
-void insert_array(Array* arr);
+void print_array(Array<double>* arr);
+void insert_array(Array<double>* arr);
 
-void print_matrix(Matrix* matrix);
-void insert_matrix(Matrix* arr);
+void print_matrix(Matrix<double>* matrix);
+void insert_matrix(Matrix<double>* arr);
 
-Matrix* _c(Matrix* a, Matrix* b);
-Matrix* identity(Matrix* arr);
-Matrix* transpose(Matrix* arr);
-Matrix* mult(Matrix* a, Matrix* b);
-Matrix* inverse(Matrix* matrix);
-Array* gauss(Matrix* matriz);
-Array* cholesky(Matrix* A, Matrix* b);
-Array* decomposition(Matrix* U, Matrix* b);
+Matrix<double>* _c(Matrix<double>* a, Matrix<double>* b);
+Matrix<double>* identity(Matrix<double>* arr);
+Matrix<double>* transpose(Matrix<double>* arr);
+Matrix<double>* mult(Matrix<double>* a, Matrix<double>* b);
+Matrix<double>* inverse(Matrix<double>* matrix);
+Array<double>* gauss(Matrix<double>* matrix);
+Array<double>* cholesky(Matrix<double>* A, Matrix<double>* b);
+Array<double>* decomposition(Matrix<double>* U, Matrix<double>* b);

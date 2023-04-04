@@ -1,44 +1,50 @@
+#pragma once
+
+#include <vector>
 #include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
+
 
 #define EPSILON 0.000001
 
-#ifndef array_h
-#define array_h
 
-// Type definitions
-typedef struct _Array {
-    double* data;
-    int size;
-} Array;
+template<class T>
+class Array {
+    public:
+        Array(int size);
+        Array(int size, T* data);
 
-typedef struct _Matrix{
-    double** data;
+        ~Array() { 
+            delete[] data;
+        }
 
-    int size_x;
-    int size_y;
-} Matrix;
+        T* data;
+        int size;
 
-#endif
-
-// Auxiliary Functions
+        bool equal(Array* other);
+};
 
 
-bool equal_array(Array* a, Array* b);
-bool equal_matrix(Matrix* a, Matrix* b);
+template<class T>
+class Matrix {
+    public:
+        Matrix(int size_x, int size_y);
+        Matrix(int size_x, int size_y, T** data);
 
-Array* to_array(Matrix* matrix);
+        ~Matrix() {
+            for (int i = 0; i < this->size_x; i++) {
+                delete[] data[i];
+            }
+            delete[] data;
+        }
 
-// Define Data Allocation Functions
+        T **data;
+        int size_x;
+        int size_y;
 
-double* allocate_array(int size);
+        bool equal(Matrix* other);
 
-double** allocate_matrix(int size_x, int size_y);
+        Array<T>* to_array();
+};
 
-// Define Data Free Functions
 
-void free_array(Array** array);
-
-void free_matrix(Matrix** matrix);
+#include "array.tpp"

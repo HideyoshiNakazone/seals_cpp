@@ -1,63 +1,57 @@
 #include "linear.h"
 
 
-void print_matrix(Matrix *a) {
+void print_matrix(Matrix<double> *a) {
     if (a == NULL) {
-        printf("NULL Matrix\n");
+        std::cout << "NULL Matrix\n";
         return;
     }
 
     for (int i=0; i<a->size_x; i++) {
         for (int j=0; j<a->size_y; j++) {
-            printf("%lf ", a->data[i][j]);
+            std::cout << a->data[i][j];
         }
         printf("\n");
     }
 }
 
-void insert_matrix(Matrix *matrix) {
+void insert_matrix(Matrix<double> *matrix) {
     double temp;
 
     for (int i=0; i < matrix->size_x; i++) {
         for (int j=0; j < matrix->size_y; j++) {
-            printf("Insira o valor do elemento %dx%d: ", i+1, j+1);
-            scanf("%lf",&temp);
-            matrix->data[i][j] = temp;
+            std::cout << "Insira o valor do elemento " << (i+1) << "x" << (j+1) << ": "; // no flush needed
+            std::cin >> matrix->data[i][j];
         }
         printf("\n");
     }
 }
 
-void print_array(Array *a) {
+void print_array(Array<double> *a) {
 
     for (int i=0; i<a->size; i++) {
-        printf("%lf ", a->data[i]);
+        std::cout << a->data[i];
     }
     printf("\n");
 }
 
-void insert_array(Array *array) {
+void insert_array(Array<double> *array) {
     double temp;
 
     for (int i=0; i < array->size; i++) {
-        printf("Insira o valor do elemento %d: ", i+1);
-        scanf("%lf",&temp);
-        array->data[i] = temp;
+        std::cout << "Insira o valor do elemento " << (i+1) << ": "; // no flush needed
+        std::cin >> array->data[i];
     }
 }
 
-Matrix* _c(Matrix* a, Matrix* b) {   
+Matrix<double>* _c(Matrix<double> *a, Matrix<double> *b) {   
     if (a->size_y != b->size_y) {
         printf("Matrizes incompativeis para concatenacao\n");
         return NULL;
     }
 
-    Matrix* c = (Matrix*)malloc(sizeof(Matrix));
 
-    c->size_x = a->size_x + b->size_x;
-    c->size_y = a->size_y;
-
-    c->data = allocate_matrix(c->size_x, c->size_y);
+    auto* c = new Matrix<double>(a->size_x + b->size_x, a->size_y);
 
     for (int i = 0; i < c->size_x; i++) {
         for (int j = 0; j < c->size_y; j++) {
@@ -72,7 +66,7 @@ Matrix* _c(Matrix* a, Matrix* b) {
     return c;
 }
 
-Matrix* identity(Matrix* I) {
+Matrix<double>* identity(Matrix<double>* I) {
 
     for (int i = 0; i < I->size_x; i++) {
         for (int j = 0; j < I->size_y; j++) {
@@ -87,12 +81,11 @@ Matrix* identity(Matrix* I) {
     return I;
 }
 
-Matrix* transpose(Matrix* input) {
-    Matrix* transposed = (Matrix*)malloc(sizeof(Matrix));
-    transposed->size_x = input->size_y;
-    transposed->size_y = input->size_x;
-
-    transposed->data = allocate_matrix(transposed->size_x, transposed->size_y);
+Matrix<double>* transpose(Matrix<double>* input) {
+    auto* transposed = new Matrix<double>(
+        input->size_y, 
+        input->size_x
+    );
 
     for (int i = 0; i < transposed->size_x; i++) {
         for (int j = 0; j < transposed->size_y; j++) {
@@ -105,17 +98,13 @@ Matrix* transpose(Matrix* input) {
     return transposed;
 }
 
-Matrix* mult(Matrix* a, Matrix* b) {   
+Matrix<double>* mult(Matrix<double> *a, Matrix<double> *b) {   
     if (a->size_y != b->size_x) {
         printf("Matrizes incompativeis para multiplicacao\n");
         return NULL;
     }
 
-    Matrix* c = (Matrix*)malloc(sizeof(Matrix));
-    c->size_x = a->size_x;
-    c->size_y = b->size_y;
-
-    c->data = allocate_matrix(c->size_x, c->size_y);
+    auto* c = new Matrix<double>(a->size_x, b->size_y);
 
     for (int i = 0; i < c->size_x; i++) {
         for (int j = 0; j < c->size_y; j++) {
@@ -128,18 +117,16 @@ Matrix* mult(Matrix* a, Matrix* b) {
     return c;
 }
 
-Matrix* inverse(Matrix* matrix) {
+Matrix<double>* inverse(Matrix<double> *matrix) {
     if (matrix->size_x != matrix->size_y) {
         printf("Invalid matrix. The matrix must be quadratic for the calculation of an inverse.\n");
         return NULL;
     }
 
-    Matrix* extended = (Matrix*)malloc(sizeof(Matrix));
-
-    extended->size_x = matrix->size_x;
-    extended->size_y = matrix->size_y*2;
-
-    extended->data = allocate_matrix(extended->size_x, extended->size_y);
+    auto* extended =  new Matrix<double>(
+        matrix->size_x, 
+        matrix->size_y*2
+    );
 
     for (int i = 0; i < extended->size_x; i++) {
         for (int j = 0; j < extended->size_y; j++) {
@@ -194,28 +181,32 @@ Matrix* inverse(Matrix* matrix) {
         i += 1;
     }
 
-    Matrix* inverse = (Matrix*)malloc(sizeof(Matrix));
-    inverse->size_x = matrix->size_x;
-    inverse->size_y = matrix->size_y;
-
-    inverse->data = allocate_matrix(inverse->size_x, inverse->size_y);
+    auto* inverse =  new Matrix<double>(matrix->size_x, matrix->size_y);
 
     for (int i = 0; i < inverse->size_x; i++) {
         for (int j = 0; j < inverse->size_y; j++) {
             inverse->data[i][j] = extended->data[i][j+inverse->size_y];
         }
     }
-
-    free_matrix(&extended);
     
     return inverse;
 }
 
-Array* gauss(Matrix* matrix) {
-    if ((matrix->size_x + 1) < matrix->size_y) {
+Array<double>* gauss(Matrix<double>* input) {
+    if ((input->size_x + 1) < input->size_y) {
         printf("Invalid matrix. The matrix must have more rows than columns for the calculation of a solution.\n");
         return NULL;
     }
+
+    double** data = new double*[input->size_x];
+    for (int i = 0; i < input->size_x; i++) {
+        data[i] = new double[input->size_y];
+        for (int j = 0; j < input->size_y; j++) {
+            data[i][j] = input->data[i][j];
+        }
+    }
+
+    auto* matrix = new Matrix<double>(input->size_x, input->size_y, data);
 
     int i = 0;
     int valid_solutions_count = 0;
@@ -249,29 +240,23 @@ Array* gauss(Matrix* matrix) {
         i += 1;
     }
 
-    Array* solution = (Array*)malloc(sizeof(Array));
-    solution->size = valid_solutions_count;
-
-    solution->data = allocate_array(solution->size);
-
+    auto* solution = new Array<double>(valid_solutions_count);
     for (int i = 0; i < solution->size; i++) {
         solution->data[i] = matrix->data[i][matrix->size_y-1] / matrix->data[i][i];
     }
 
+    delete matrix;
+
     return solution;
 }
 
-Array* cholesky(Matrix* A, Matrix* b) {
+Array<double>* cholesky(Matrix<double>* A, Matrix<double>* b) {
     if (A->size_x != b->size_x && b->size_y != 1) {
         printf("Invalid matrix. The matrix must have the same number of rows as the array for the calculation of a solution.\n");
         return NULL;
     }
 
-    Matrix* g = (Matrix*)malloc(sizeof(Matrix));
-    g->size_y = A->size_y;
-    g->size_x = A->size_x;
-
-    g->data = allocate_matrix(g->size_x, g->size_y);
+    auto* g = new Matrix<double>(A->size_x, A->size_y);
 
     for ( int i=0; i < g->size_x; i++ )
     {
@@ -299,23 +284,19 @@ Array* cholesky(Matrix* A, Matrix* b) {
         }
     }
 
-    Matrix* gt = transpose(g);
+    Matrix<double>* gt = transpose(g);
 
-    Matrix* y = mult(inverse(g),b);
+    Matrix<double>* y = mult(inverse(g),b);
 
-    return to_array(mult(inverse(gt),y));
+    return mult(inverse(gt),y)->to_array();
 }
 
-Array* decomposition(Matrix* U, Matrix* b) {
+Array<double>* decomposition(Matrix<double>* U, Matrix<double>* b) {
     if (U->size_x != b->size_x && b->size_y != 1) {
         printf("Invalid matrix. The matrix must have the same number of rows as the array for the calculation of a solution.\n");
         return NULL;
     }
-    Matrix* L = (Matrix*)malloc(sizeof(Matrix));
-    L->size_y = U->size_y;
-    L->size_x = U->size_x;
-
-    L->data = allocate_matrix(L->size_x, L->size_y);
+    Matrix<double> *L = new Matrix<double>(U->size_x, U->size_y);
 
     identity(L);
 
@@ -346,7 +327,7 @@ Array* decomposition(Matrix* U, Matrix* b) {
         }
     }
 
-    Matrix* y = mult(inverse(L),b);
+    Matrix<double>* y = mult(inverse(L),b);
 
-    return to_array(mult(inverse(U),y));
+    return (mult(inverse(U),y))->to_array();
 }

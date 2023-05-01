@@ -51,9 +51,6 @@ double _g(double (*f)(double, double), double a, double b, double c, double d, i
     double dx = (b-a)/n;
     double dy = (d-c)/n;
 
-    int zeta = 1;
-    int csi = 1;
-
     double sigma = 0;
     for(int zeta = 1; zeta <= (n/2); zeta++) {
         sigma += f(_partition(a, dx, i),_partition(c, dy, 2*zeta - 1));
@@ -68,9 +65,7 @@ double _g(double (*f)(double, double), double a, double b, double c, double d, i
 }
 
 double simpson_double(double (*f)(double, double), double a, double b, double c, double d, int n) {
-
     double dx = (b-a)/n;
-    double dy = (d-c)/n;
 
     double eta = 0;
     for (int psi = 1; psi < (n/2); psi++) {

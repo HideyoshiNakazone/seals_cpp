@@ -16,8 +16,6 @@ void print_matrix(Matrix<double> *a) {
 }
 
 void insert_matrix(Matrix<double> *matrix) {
-    double temp;
-
     for (int i=0; i < matrix->size_x; i++) {
         for (int j=0; j < matrix->size_y; j++) {
             std::cout << "Insira o valor do elemento " << (i+1) << "x" << (j+1) << ": "; // no flush needed
@@ -36,8 +34,6 @@ void print_array(Array<double> *a) {
 }
 
 void insert_array(Array<double> *array) {
-    double temp;
-
     for (int i=0; i < array->size; i++) {
         std::cout << "Insira o valor do elemento " << (i+1) << ": "; // no flush needed
         std::cin >> array->data[i];

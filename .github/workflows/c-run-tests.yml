@@ -15,4 +15,4 @@ jobs:
     - name: checkout repo
       uses: actions/checkout@v2
     - name: Make - Run Tests
-      run: cd tests && make run_tests
+      run: make run_tests

@@ -3,15 +3,12 @@
 
 double bissec(double (*f)(double), double a, double b, double eps) {
     double fa = f(a);
-    double fb = f(b);
-
     double c, fc;
     do {
         c = (a + b) / 2;
         fc = f(c);
         if (fa * fc <= 0) {
             b = c;
-            fb = fc;
         } else {
             a = c;
             fa = fc;

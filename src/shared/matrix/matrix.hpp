@@ -3,25 +3,10 @@
 #include <vector>
 #include <math.h>
 
+#include "../array/array.hpp"
+
 
 #define EPSILON 0.000001
-
-
-template<class T>
-class Array {
-    public:
-        Array(int size);
-        Array(int size, T* data);
-
-        ~Array() { 
-            delete[] data;
-        }
-
-        T* data;
-        int size;
-
-        bool equal(Array* other);
-};
 
 
 template<class T>
@@ -47,4 +32,4 @@ class Matrix {
 };
 
 
-#include "array.tpp"
+#include "matrix.tpp"

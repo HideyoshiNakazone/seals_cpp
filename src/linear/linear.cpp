@@ -1,4 +1,4 @@
-#include "linear.h"
+#include "linear.hpp"
 
 
 void print_matrix(Matrix<double> *a) {

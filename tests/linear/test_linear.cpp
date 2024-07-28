@@ -1,5 +1,5 @@
-#include "../../modules/linear/linear.h"
-#include "../../modules/shared/array.h"
+#include "../../src/linear/linear.hpp"
+#include "../../src/shared/matrix/matrix.hpp"
 
 
 bool test_concatenate_matrix() {

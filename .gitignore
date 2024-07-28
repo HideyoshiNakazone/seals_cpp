@@ -1,5 +1,5 @@
-tests/test_*
+*.bin
 *.so
 *.o
 
-seals/*
+build/*

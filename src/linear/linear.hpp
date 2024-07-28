@@ -2,7 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../shared/array.h"
+#include "../shared/array/array.hpp"
+#include "../shared/matrix/matrix.hpp"
 
 
 void print_array(Array<double>* arr);

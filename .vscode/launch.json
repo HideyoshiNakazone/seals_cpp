@@ -8,36 +8,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Run Test Linear",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/tests/test_linear",
-            "cwd": "${workspaceFolder}",
-            "preLaunchTask": "build"
-        },
-        {
             "name": "Run Test Array",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/tests/test_array",
+            "program": "${workspaceFolder}/tests/test_array.bin",
             "cwd": "${workspaceFolder}",
             "preLaunchTask": "build"
         },
-        {
-            "name": "Run Test Root",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/tests/test_root",
-            "cwd": "${workspaceFolder}",
-            "preLaunchTask": "build"
-        },
-        {
-            "name": "Run Test Integral",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/tests/test_integral",
-            "cwd": "${workspaceFolder}",
-            "preLaunchTask": "build"
-        }
     ]
 }

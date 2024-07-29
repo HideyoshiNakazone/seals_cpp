@@ -4,9 +4,9 @@
         {
             "type": "shell",
             "label": "build",
-            "command": "make test",
+            "command": "make debug_tests",
             "options": {
-                "cwd": "${workspaceFolder}/tests"
+                "cwd": "${workspaceFolder}"
             },
             "group": {
                 "isDefault": true,

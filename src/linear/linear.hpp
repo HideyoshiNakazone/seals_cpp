@@ -1,22 +1,39 @@
 #include <iostream>
-#include <stdio.h>
-#include <string.h>
-
-#include "../shared/array/array.hpp"
-#include "../shared/matrix/matrix.hpp"
+#include <vector>
+#include <memory>
 
 
-void print_array(Array<double>* arr);
-void insert_array(Array<double>* arr);
+template<typename T>
+using Array = std::vector<T>;
 
-void print_matrix(Matrix<double>* matrix);
-void insert_matrix(Matrix<double>* arr);
+template<typename T>
+using Matrix = Array<Array<T>>;
 
-Matrix<double>* _c(Matrix<double>* a, Matrix<double>* b);
-Matrix<double>* identity(Matrix<double>* arr);
-Matrix<double>* transpose(Matrix<double>* arr);
-Matrix<double>* mult(Matrix<double>* a, Matrix<double>* b);
-Matrix<double>* inverse(Matrix<double>* matrix);
-Array<double>* gauss(Matrix<double>* matrix);
-Array<double>* cholesky(Matrix<double>* A, Matrix<double>* b);
-Array<double>* decomposition(Matrix<double>* U, Matrix<double>* b);
+
+template<typename T>
+std::unique_ptr<Matrix<T>> _c(std::shared_ptr<Matrix<T>> a, std::shared_ptr<Matrix<T>> b);
+
+
+template<typename T>
+std::unique_ptr<Matrix<T>> identity(uint size_x, uint size_y);
+
+template<typename T>
+std::unique_ptr<Matrix<T>> transpose(std::shared_ptr<Matrix<T>> input);
+
+template<typename T>
+std::unique_ptr<Matrix<T>> dot(std::shared_ptr<Matrix<T>> a, std::shared_ptr<Matrix<T>> b);
+
+template<typename T>
+std::unique_ptr<Matrix<T>> mult(std::shared_ptr<Matrix<T>> a, std::shared_ptr<Matrix<T>> b);
+
+template<typename T>
+std::unique_ptr<Matrix<T>> inverse(std::shared_ptr<Matrix<T>> matrix);
+
+template<typename T>
+std::unique_ptr<Array<T>> gauss(std::shared_ptr<Matrix<T>> matrix, std::shared_ptr<Array<T>> b);
+
+template<typename T>
+std::unique_ptr<Array<T>> cholesky(std::shared_ptr<Matrix<T>> A, std::shared_ptr<Matrix<T>> b);
+
+template<typename T>
+std::unique_ptr<Array<T>> decomposition(std::shared_ptr<Matrix<T>> U, std::shared_ptr<Matrix<T>> b);
